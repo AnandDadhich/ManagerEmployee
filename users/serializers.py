@@ -71,6 +71,7 @@ class ManagerSerializer(WritableNestedModelSerializer):
             a = dict(validated_data['user'])
 
             user = UserInfo(**a)
+            user.is_active=True
             user.save()
             user.set_password(password)
             user.save()
@@ -100,6 +101,7 @@ class EmployeeSerializer(WritableNestedModelSerializer):
             a = dict(validated_data['emp_user'])
             user = UserInfo(**a)
             user.save()
+            user.is_active=True
             user.set_password(password)
             user.save()
 

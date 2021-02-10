@@ -17,6 +17,9 @@ from .permissions import IsManager
 from Assignment import settings
 from rest_framework.pagination import PageNumberPagination
 from django_filters import rest_framework as filters
+from rest_framework.schemas import SchemaGenerator
+from rest_framework_swagger import renderers
+from rest_framework import permissions
 
 # Create your views here.
 
@@ -86,7 +89,7 @@ class RegisterManagerView(viewsets.ModelViewSet):
 class EmployeeCreateAPIView(CreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
-    permission_classes = (IsManager,)
+    #permission_classes = (IsManager,)
     authentication_classes = (JSONWebTokenAuthentication,)
 
 
@@ -95,14 +98,25 @@ class EmployeeListAPIView(ListAPIView):
     serializer_class = EmployeeSerializer
     permission_classes = (IsManager,)
     authentication_classes = (JSONWebTokenAuthentication,)
+    pagination_class = PaginationSetView
     #filter_backends = (filters.DjangoFilterBackend,)
     filterset_fields = {'city': ['exact'], 'mobile': ['exact']}
+    renderer_classes = [
+        renderers.OpenAPIRenderer,
+        renderers.SwaggerUIRenderer
+    ]
+
+    def list(self, request, *args, **kwargs):
+        generator = SchemaGenerator()
+        schema = generator.get_schema(request=request)
+        return Response(schema)
 
 
 class EmployeeDetailAPIView(RetrieveAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = (IsManager,)
+    pagination_class = PaginationSetView
     authentication_classes = (JSONWebTokenAuthentication,)
 
 
@@ -110,4 +124,5 @@ class EmployeeUpdateAPIView(UpdateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = (IsManager,)
+    pagination_class = PaginationSetView
     authentication_classes = (JSONWebTokenAuthentication,)

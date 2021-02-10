@@ -4,6 +4,7 @@ from .models import *
 
 class IsManager(permissions.BasePermission):
     def has_permission(self, request, view):
-        owner = Manager.objects.filter(user__email=request.user).first()
-        if owner:
+        owner = UserInfo.objects.filter(email=request.user).first()
+        print(owner)
+        if owner!=None or request.user.is_superuser:
             return bool(request.user or request.user.is_superuser)
